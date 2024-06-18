@@ -90,9 +90,10 @@ $(document).ready(function () {
 
     $('#addServiceForm').on('submit', function (e) {
         e.preventDefault();
-        const formData = $(this).serialize(); // Serializa os dados do formulário
+        const formData = $(this).serialize();
+        //console.log(formData); // Verifica os dados antes de enviar
         $.ajax({
-            url: 'scripts/services/add_service.php',
+            url: `${apiUrl}/add_service.php`,
             method: 'POST',
             data: formData,
             dataType: 'json',
@@ -110,6 +111,7 @@ $(document).ready(function () {
             }
         });
     });
+
 
     // Visualizar serviço
     $(document).on('click', '.view-btn', function () {
@@ -133,8 +135,8 @@ $(document).ready(function () {
                     $('#viewResponsavelEmpresa').text(service.responsavel_empresa);
                     $('#viewResponsavelComercial').text(service.responsavel_comercial);
                     // Assumindo que existe um campo 'postes' na resposta que é uma lista
-                    const posteList = service.postes.map(poste => `<li>${poste.nome_rua}</li>`).join('');
-                    $('#viewPosteList').html(posteList);
+                    //const posteList = service.postes.map(poste => `<li>${poste.nome_rua}</li>`).join('');
+                    //$('#viewPosteList').html(posteList);
                     $('#viewServiceModal').show();
                 } else {
                     alert('Erro ao carregar serviço');
@@ -173,12 +175,12 @@ $(document).ready(function () {
                     $('#editEngenheiro').val(service.engenheiro_id);
                     $('#editResponsavelEmpresa').val(service.responsavel_empresa);
                     $('#editResponsavelComercial').val(service.responsavel_comercial);
-                    const posteList = service.postes.map(poste => `
-                        <li>
-                            <input type="text" name="postes[]" value="${poste.nome_rua}" required>
-                        </li>
-                    `).join('');
-                    $('#editPosteList').html(posteList);
+                    //const posteList = service.postes.map(poste => `
+                    //    <li>
+                    //        <input type="text" name="postes[]" value="${poste.nome_rua}" required>
+                    //    </li>
+                    //`).join('');
+                    //$('#editPosteList').html(posteList);
                     $('#editServiceModal').show();
                 } else {
                     alert('Erro ao carregar serviço');
