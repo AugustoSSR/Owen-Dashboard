@@ -76,7 +76,6 @@ Método: POST
 Corpo da Requisição (JSON):
 
 ```json
-Copiar código
 {
     "nome_projeto": "Nome do Projeto",
     "cidade": "Cidade",
@@ -98,7 +97,6 @@ Método: POST
 Corpo da Requisição (JSON):
 
 ```json
-Copiar código
 {
     "id": 1,
     "nome_projeto": "Nome do Projeto Atualizado",
@@ -121,7 +119,6 @@ Método: POST
 Corpo da Requisição (JSON):
 
 ```json
-Copiar código
 {
     "id": 1
 }
