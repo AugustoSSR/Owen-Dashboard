@@ -37,3 +37,103 @@ CREATE TABLE servicos (
     responsavel_empresa VARCHAR(255) NOT NULL,
     responsavel_comercial VARCHAR(255) NOT NULL
 );
+
+Instalação
+Clone este repositório para o seu servidor local:
+
+sh
+Copiar código
+git clone https://github.com/seu-usuario/sistema-de-servicos.git
+Configure a conexão com o banco de dados no arquivo includes/conexao.php:
+
+php
+Copiar código
+<?php
+$servername = "seu_servidor";
+$username = "seu_usuario";
+$password = "sua_senha";
+$dbname = "seu_banco_de_dados";
+
+// Cria a conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verifica a conexão
+if ($conn->connect_error) {
+    die("Conexão falhou: " . $conn->connect_error);
+}
+?>
+Certifique-se de que a tabela servicos foi criada conforme a seção de Configuração do Banco de Dados.
+
+Uso
+Adicionar Serviço
+Endpoint: add_service.php
+
+Método: POST
+
+Corpo da Requisição (JSON):
+
+json
+Copiar código
+{
+    "nome_projeto": "Nome do Projeto",
+    "cidade": "Cidade",
+    "empresa": "Empresa",
+    "concessionaria": "Concessionária",
+    "metragem_total": 100,
+    "quantidade_postes": 10,
+    "numero_art": "123456",
+    "engenheiro": "Engenheiro Responsável",
+    "responsavel_empresa": "Responsável pela Empresa",
+    "responsavel_comercial": "Responsável Comercial"
+}
+Editar Serviço
+Endpoint: edit_service.php
+
+Método: POST
+
+Corpo da Requisição (JSON):
+
+json
+Copiar código
+{
+    "id": 1,
+    "nome_projeto": "Nome do Projeto Atualizado",
+    "cidade": "Cidade Atualizada",
+    "empresa": "Empresa Atualizada",
+    "concessionaria": "Concessionária Atualizada",
+    "metragem_total": 200,
+    "quantidade_postes": 20,
+    "numero_art": "654321",
+    "engenheiro": "Engenheiro Responsável Atualizado",
+    "responsavel_empresa": "Responsável pela Empresa Atualizado",
+    "responsavel_comercial": "Responsável Comercial Atualizado"
+}
+Deletar Serviço
+Endpoint: delete_service.php
+
+Método: POST
+
+Corpo da Requisição (JSON):
+
+json
+Copiar código
+{
+    "id": 1
+}
+Visualizar Serviços
+Endpoint: get_services.php
+
+Método: GET
+
+Visualizar Serviço por ID
+Endpoint: get_service.php
+
+Método: GET
+
+Parâmetro de URL:
+
+bash
+Copiar código
+?id=1
+Licença
+Este projeto está licenciado sob a licença MIT. Consulte o arquivo LICENSE para obter mais informações.
