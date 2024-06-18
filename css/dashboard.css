@@ -1,0 +1,249 @@
+/* Estilos gerais */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: #f6f5f7;
+    height: 100vh;
+    display: flex;
+}
+
+/* Container do dashboard */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* Estilos da barra lateral */
+.sidebar {
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.808);
+    /* Cor de fundo com opacidade */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    position: fixed;
+    height: 100%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    /* Centralizar o texto */
+    flex-grow: 0;
+    /* Para ocupar todo o espaço disponível na largura */
+    display: flex;
+    align-items: center;
+    /* Alinhar o conteúdo verticalmente */
+    justify-content: center;
+    /* Alinhar o conteúdo horizontalmente */
+    position: relative;
+    /* Para posicionar a linha */
+}
+
+.sidebar-header::after {
+    content: '';
+    /* Cria um pseudo-elemento */
+    position: absolute;
+    /* Posicionamento absoluto em relação ao elemento pai */
+    bottom: -10px;
+    /* Coloca a linha na parte inferior */
+    left: 20px;
+    /* Define a posição inicial da linha */
+    width: calc(100% - 40px);
+    /* A largura da linha é igual à largura do elemento pai menos as margens */
+    border-bottom: 1px solid #666;
+    /* Adiciona a linha separadora */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 20px 0;
+    flex-grow: 1;
+}
+
+.sidebar ul li {
+    padding: 15px;
+    text-align: left;
+    /* Alinha o texto à esquerda */
+    padding-left: 20px;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Azonix', sans-serif;
+    /* Define a fonte como AZONIX */
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+}
+
+.sidebar ul li a:hover {
+    background-color: rgba(68, 68, 68, 0.8);
+    /* Cor de fundo com opacidade */
+    /* Garantir que o padding seja consistente */
+}
+
+.sidebar-footer {
+    padding: 20px;
+    text-align: left;
+    /* Alinha o texto à esquerda */
+    padding-left: 20px;
+    position: relative;
+    /* Para posicionamento do <hr> */
+}
+
+.sidebar-footer hr {
+    position: absolute;
+    /* Posicionamento absoluto */
+    top: 0;
+    /* Posiciona no topo */
+    left: 20px;
+    /* Alinha com o padding do container */
+    width: calc(100% - 40px);
+    /* Largura total com margens */
+    border-top: 1px solid #666;
+    /* Adiciona a linha */
+}
+
+.sidebar-footer .profile {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-footer .profile i {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.sidebar-footer .profile button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.submenu {
+    display: none;
+    list-style: none;
+    padding-left: 20px;
+}
+
+.submenu li {
+    padding: 10px 0;
+}
+
+.submenu li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.submenu li a i {
+    margin-right: 10px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+/* Estilos do conteúdo principal */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    margin: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+        0 10px 10px rgba(0, 0, 0, 0.22);
+    margin-left: 270px;
+    /* Espaço para a sidebar */
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+        0 10px 10px rgba(0, 0, 0, 0.22);
+    text-align: center;
+    width: 30%;
+}
+
+.card h2 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 2em;
+    color: #ff4b2b;
+}
+
+/* Ajuste para sidebar fechada */
+.main-content.closed {
+    margin-left: 20px;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    cursor: pointer;
+    display: flex;
+    align-items: end;
+    margin-top: 20px;
+}
+
+.dashboard-title {
+    font-family: 'Azonix', sans-serif;
+    font-size: 24px;
+    /* Tamanho do texto conforme necessário */
+    color: #fff;
+    /* Cor do texto */
+    text-align: center;
+    /* Centralizar o texto */
+    margin-top: 10px;
+    /* Espaçamento superior */
+}
