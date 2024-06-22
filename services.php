@@ -24,6 +24,7 @@ $user_name = $_SESSION["name"];
 
     <!-- Incluir jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.min.js"></script>
 
     <!-- Incluir DataTables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
@@ -160,8 +161,20 @@ $user_name = $_SESSION["name"];
                 <label for="editResponsavelComercial">Responsável Comercial:</label>
                 <input type="text" id="editResponsavelComercial" name="responsavel_comercial" required>
 
-                <label for="editPosteList">Postes:</label>
-                <ul id="editPosteList"></ul>
+                <h3>Postes</h3>
+                <table id="posteTable">
+                    <thead>
+                        <tr>
+                            <th>Nome da Rua</th>
+                            <th>Número de Postes</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas de postes serão adicionadas aqui -->
+                    </tbody>
+                </table>
+                <button type="button" id="addPosteBtn">Adicionar Poste</button>
 
                 <button type="submit">Salvar</button>
             </form>
@@ -189,6 +202,15 @@ $user_name = $_SESSION["name"];
     </div>
 
     <script src="js/services.js"></script>
+
+    <!-- Template para linha de poste -->
+    <script id="posteRowTemplate" type="text/x-handlebars-template">
+        <tr>
+        <td><input type="text" name="nome_rua[]" required></td>
+        <td><input type="number" name="numero_postes[]" required></td>
+        <td><button type="button" class="removePosteBtn">Remover</button></td>
+    </tr>
+</script>
 </body>
 
 </html>

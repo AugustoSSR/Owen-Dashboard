@@ -1,28 +1,45 @@
-// edit_service.php
 <?php
 include '../../includes/conexao.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-if (isset($data['id'], $data['nome_projeto'], $data['cidade'], $data['empresa'], $data['concessionaria'], $data['metragem_total'], $data['quantidade_postes'], $data['numero_art'], $data['engenheiro'], $data['responsavel_empresa'], $data['responsavel_comercial'])) {
-    $id = $data['id'];
-    $nomeProjeto = $data['nome_projeto'];
-    $cidade = $data['cidade'];
-    $empresa = $data['empresa'];
-    $concessionaria = $data['concessionaria'];
-    $metragemTotal = $data['metragem_total'];
-    $quantidadePostes = $data['quantidade_postes'];
-    $numeroART = $data['numero_art'];
-    $engenheiro = $data['engenheiro'];
-    $responsavelEmpresa = $data['responsavel_empresa'];
-    $responsavelComercial = $data['responsavel_comercial'];
+if (isset($_POST['servico_id'], $_POST['nome_projeto'], $_POST['cidade'], $_POST['empresa'], $_POST['concessionaria'], $_POST['metragem_total'], $_POST['quantidade_postes'], $_POST['numero_art'], $_POST['engenheiro'], $_POST['responsavel_empresa'], $_POST['responsavel_comercial'])) {
+    $servicoId = $_POST['servico_id'];
+    $nomeProjeto = $_POST['nome_projeto'];
+    $cidade = $_POST['cidade'];
+    $empresa = $_POST['empresa'];
+    $concessionaria = $_POST['concessionaria'];
+    $metragemTotal = $_POST['metragem_total'];
+    $quantidadePostes = $_POST['quantidade_postes'];
+    $numeroART = $_POST['numero_art'];
+    $engenheiro = $_POST['engenheiro'];
+    $responsavelEmpresa = $_POST['responsavel_empresa'];
+    $responsavelComercial = $_POST['responsavel_comercial'];
 
     // Atualiza o serviço no banco de dados
-    $sql = "UPDATE servicos SET nome_projeto = ?, cidade = ?, empresa = ?, concessionaria = ?, metragem_total = ?, quantidade_postes = ?, numero_art = ?, engenheiro = ?, responsavel_empresa = ?, responsavel_comercial = ? WHERE id = ?";
+    $sql = "UPDATE servicos SET nome_projeto = ?, cidade_id = ?, empresa_id = ?, concessionaria_id = ?, metragem_total = ?, quantidade_postes = ?, numero_art = ?, engenheiro_id = ?, responsavel_empresa = ?, responsavel_comercial = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("siiiiisiisi", $nomeProjeto, $cidade, $empresa, $concessionaria, $metragemTotal, $quantidadePostes, $numeroART, $engenheiro, $responsavelEmpresa, $responsavelComercial, $id);
+    $stmt->bind_param("siiiiisiisi", $nomeProjeto, $cidade, $empresa, $concessionaria, $metragemTotal, $quantidadePostes, $numeroART, $engenheiro, $responsavelEmpresa, $responsavelComercial, $servicoId);
 
     if ($stmt->execute()) {
+        // Remove postes existentes
+        $sqlDelete = "DELETE FROM poste WHERE servico_id = ?";
+        $stmtDelete = $conn->prepare($sqlDelete);
+        $stmtDelete->bind_param("i", $servicoId);
+        $stmtDelete->execute();
+
+        // Adiciona novos postes
+        if (isset($_POST['nome_rua'], $_POST['numero_postes'])) {
+            $nomeRuas = $_POST['nome_rua'];
+            $numeroPostes = $_POST['numero_postes'];
+
+            $sqlInsert = "INSERT INTO poste (servico_id, nome_rua, numero_postes) VALUES (?, ?, ?)";
+            $stmtInsert = $conn->prepare($sqlInsert);
+
+            for ($i = 0; $i < count($nomeRuas); $i++) {
+                $stmtInsert->bind_param("isi", $servicoId, $nomeRuas[$i], $numeroPostes[$i]);
+                $stmtInsert->execute();
+            }
+        }
+
         echo json_encode(["success" => true]);
     } else {
         echo json_encode(["success" => false, "error" => "Erro ao atualizar serviço"]);
@@ -30,4 +47,3 @@ if (isset($data['id'], $data['nome_projeto'], $data['cidade'], $data['empresa'],
 } else {
     echo json_encode(["success" => false, "error" => "Dados incompletos"]);
 }
-?>

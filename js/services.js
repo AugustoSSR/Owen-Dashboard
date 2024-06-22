@@ -1,8 +1,9 @@
+
 $(document).ready(function () {
     const apiUrl = 'scripts/services';
     const apiGet = 'scripts/';
 
-    // Carregar lista de serviços
+    // Função para carregar lista de serviços
     function loadServices() {
         $.ajax({
             url: `${apiUrl}/get_services.php`,
@@ -43,30 +44,48 @@ $(document).ready(function () {
         });
     }
 
+    // Função para carregar opções de seleção
+    function loadOptions(callback) {
+        const endpoints = [
+            { url: 'cidades/get_cidades.php', select: '#editCidade' },
+            { url: 'empresas/get_empresas.php', select: '#editEmpresa' },
+            { url: 'concessionarias/get_concessionarias.php', select: '#editConcessionaria' },
+            { url: 'engenheiros/get_engenheiros.php', select: '#editEngenheiro' },
+            { url: 'cidades/get_cidades.php', select: '#cidadeSelect' },
+            { url: 'empresas/get_empresas.php', select: '#empresaSelect' },
+            { url: 'concessionarias/get_concessionarias.php', select: '#concessionariaSelect' },
+            { url: 'engenheiros/get_engenheiros.php', select: '#engenheiroSelect' }
+        ];
 
-    // Carregar opções de cidades, empresas, concessionarias e engenheiros
-    function loadOptions() {
-        const endpoints = ['cidades/get_cidades.php', 'empresas/get_empresas.php', 'concessionarias/get_concessionarias.php', 'engenheiros/get_engenheiros.php'];
-        const selects = ['#cidadeSelect', '#empresaSelect', '#concessionariaSelect', '#engenheiroSelect', '#editCidade', '#editEmpresa', '#editConcessionaria', '#editEngenheiro', '#cidade', '#empresa', '#concessionaria', '#engenheiro'];
+        let completedRequests = 0;
+        const totalRequests = endpoints.length;
 
-        endpoints.forEach((endpoint, index) => {
+        endpoints.forEach((endpoint) => {
             $.ajax({
-                url: `${apiGet}/${endpoint}`,
+                url: `${apiGet}/${endpoint.url}`,
                 method: 'GET',
                 success: function (response) {
                     const data = JSON.parse(response);
                     if (data.status === 'success') {
                         const options = data[Object.keys(data)[1]];
-                        $(selects[index]).empty();
+                        $(endpoint.select).empty();
                         options.forEach(function (option) {
-                            $(selects[index]).append('<option value="' + option.id + '">' + option.nome + '</option>');
+                            $(endpoint.select).append('<option value="' + option.id + '">' + option.nome + '</option>');
                         });
                     } else {
                         console.error('Erro ao carregar opções: ' + data.message);
                     }
+                    completedRequests++;
+                    if (completedRequests === totalRequests && callback) {
+                        callback();
+                    }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Erro ao carregar ' + endpoint.split('_')[1] + ': ' + error);
+                    console.error('Erro ao carregar ' + endpoint.url.split('_')[1] + ': ' + error);
+                    completedRequests++;
+                    if (completedRequests === totalRequests && callback) {
+                        callback();
+                    }
                 }
             });
         });
@@ -91,7 +110,6 @@ $(document).ready(function () {
     $('#addServiceForm').on('submit', function (e) {
         e.preventDefault();
         const formData = $(this).serialize();
-        //console.log(formData); // Verifica os dados antes de enviar
         $.ajax({
             url: `${apiUrl}/add_service.php`,
             method: 'POST',
@@ -111,7 +129,6 @@ $(document).ready(function () {
             }
         });
     });
-
 
     // Visualizar serviço
     $(document).on('click', '.view-btn', function () {
@@ -134,9 +151,10 @@ $(document).ready(function () {
                     $('#viewEngenheiro').text(service.engenheiro);
                     $('#viewResponsavelEmpresa').text(service.responsavel_empresa);
                     $('#viewResponsavelComercial').text(service.responsavel_comercial);
-                    // Assumindo que existe um campo 'postes' na resposta que é uma lista
-                    //const posteList = service.postes.map(poste => `<li>${poste.nome_rua}</li>`).join('');
-                    //$('#viewPosteList').html(posteList);
+
+                    const posteList = service.postes ? service.postes.map(poste => `<li>${poste.nome_rua}</li>`).join('') : '<li>Nenhum poste registrado</li>';
+                    $('#viewPosteList').html(posteList);
+
                     $('#viewServiceModal').show();
                 } else {
                     alert('Erro ao carregar serviço');
@@ -148,7 +166,6 @@ $(document).ready(function () {
         });
     });
 
-
     $('#viewServiceModal .close').on('click', function () {
         $('#viewServiceModal').hide();
     });
@@ -156,39 +173,45 @@ $(document).ready(function () {
     // Editar serviço
     $(document).on('click', '.edit-btn', function () {
         const id = $(this).data('id');
-        $.ajax({
-            url: `${apiUrl}/get_service.php`,
-            method: 'GET',
-            data: { id: id },
-            dataType: 'json',
-            success: function (data) {
-                if (data.status === 'success') {
-                    const service = data.servico;
-                    $('#editServiceId').val(service.id);
-                    $('#editNomeProjeto').val(service.nome_projeto);
-                    $('#editCidade').val(service.cidade_id);
-                    $('#editEmpresa').val(service.empresa_id);
-                    $('#editConcessionaria').val(service.concessionaria_id);
-                    $('#editMetragemTotal').val(service.metragem_total);
-                    $('#editQuantidadePostes').val(service.quantidade_postes);
-                    $('#editNumeroART').val(service.numero_art);
-                    $('#editEngenheiro').val(service.engenheiro_id);
-                    $('#editResponsavelEmpresa').val(service.responsavel_empresa);
-                    $('#editResponsavelComercial').val(service.responsavel_comercial);
-                    //const posteList = service.postes.map(poste => `
-                    //    <li>
-                    //        <input type="text" name="postes[]" value="${poste.nome_rua}" required>
-                    //    </li>
-                    //`).join('');
-                    //$('#editPosteList').html(posteList);
-                    $('#editServiceModal').show();
-                } else {
-                    alert('Erro ao carregar serviço');
+        loadOptions(function () {
+            $.ajax({
+                url: `${apiUrl}/get_service.php`,
+                method: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status === 'success') {
+                        const service = data.servico;
+                        $('#editServiceId').val(service.id);
+                        $('#editNomeProjeto').val(service.nome_projeto);
+                        $('#editCidade').val(service.cidade_id);
+                        $('#editEmpresa').val(service.empresa_id);
+                        $('#editConcessionaria').val(service.concessionaria_id);
+                        $('#editMetragemTotal').val(service.metragem_total);
+                        $('#editQuantidadePostes').val(service.quantidade_postes);
+                        $('#editNumeroART').val(service.numero_art);
+                        $('#editEngenheiro').val(service.engenheiro_id);
+                        $('#editResponsavelEmpresa').val(service.responsavel_empresa);
+                        $('#editResponsavelComercial').val(service.responsavel_comercial);
+
+                        const posteList = service.postes ? service.postes.map(poste => `
+                            <tr>
+                                <td><input type="text" name="nome_rua[]" value="${poste.nome_rua}" required></td>
+                                <td><input type="number" name="numero_postes[]" value="${poste.numero_postes}" required></td>
+                                <td><button type="button" class="removePosteBtn">Remover</button></td>
+                            </tr>
+                        `).join('') : '<tr><td colspan="3">Nenhum poste registrado</td></tr>';
+                        $('#posteTable tbody').html(posteList);
+
+                        $('#editServiceModal').show();
+                    } else {
+                        alert('Erro ao carregar serviço');
+                    }
+                },
+                error: function (error) {
+                    console.error('Erro ao carregar serviço:', error);
                 }
-            },
-            error: function (error) {
-                console.error('Erro ao carregar serviço:', error);
-            }
+            });
         });
     });
 
@@ -200,13 +223,13 @@ $(document).ready(function () {
         e.preventDefault();
         const formData = $(this).serialize();
         $.ajax({
-            url: `${apiUrl}/update_service.php`,
+            url: `${apiUrl}/edit_service.php`,
             method: 'POST',
             data: formData,
             dataType: 'json',
             success: function (data) {
                 if (data.status === 'success') {
-                    $('#editServiceModal').hide();
+                    $('#editServiceMoal').hide();
                     loadServices();
                     alert('Serviço atualizado com sucesso');
                 } else {
@@ -219,27 +242,17 @@ $(document).ready(function () {
         });
     });
 
-    // Excluir serviço
-    $(document).on('click', '.delete-btn', function () {
-        if (!confirm('Tem certeza que deseja excluir este serviço?')) return;
+    // Adicionar linha de poste
+    $('#addPosteBtn').on('click', function () {
+        const templateSource = $("#posteRowTemplate").html();
+        const template = Handlebars.compile(templateSource);
+        const context = {};
+        const html = template(context);
+        $('#posteTable tbody').append(html);
+    });
 
-        const id = $(this).data('id');
-        $.ajax({
-            url: `${apiUrl}/delete_service.php`,
-            method: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function (data) {
-                if (data.status === 'success') {
-                    loadServices();
-                    alert('Serviço excluído com sucesso');
-                } else {
-                    alert('Erro ao excluir serviço');
-                }
-            },
-            error: function (error) {
-                console.error('Erro ao excluir serviço:', error);
-            }
-        });
+    // Remover linha de poste
+    $(document).on('click', '.removePosteBtn', function () {
+        $(this).closest('tr').remove();
     });
 });
