@@ -3,28 +3,40 @@ $(document).ready(function () {
 
     function fetchCidades() {
         $.ajax({
-            url: 'scripts/cidades/get_cidade.php',
+            url: 'scripts/cidades/get_cidades.php',
             method: 'GET',
             success: function (response) {
-                var data = JSON.parse(response);
-                if (data.status === 'success') {
-                    var cities = data.cidades;
-                    var table = $('#cityTable').DataTable();
-                    table.clear();
-                    cities.forEach(function (city) {
-                        table.row.add([
-                            city.id,
-                            city.nome,
-                            '<button class="btn edit-btn" onclick="editCity(' + city.id + ')">Editar</button>' +
-                            '<button class="btn delete-btn" onclick="deleteCity(' + city.id + ')">Excluir</button>'
-                        ]).draw();
-                    });
-                } else {
-                    alert(data.message);
+                try {
+                    console.log(response);  // Log para ver a resposta bruta
+                    var data = JSON.parse(response);
+                    if (data.status === 'success') {
+                        var cities = data.cidades;
+                        console.log(cities);  // Log para ver a estrutura de 'cities'
+                        if (Array.isArray(cities)) {
+                            var table = $('#cityTable').DataTable();
+                            table.clear();
+                            cities.forEach(function (city) {
+                                table.row.add([
+                                    city.id,
+                                    city.nome,
+                                    '<button class="btn edit-btn" onclick="editCity(' + city.id + ')">Editar</button>' +
+                                    '<button class="btn delete-btn" onclick="deleteCity(' + city.id + ')">Excluir</button>'
+                                ]).draw();
+                            });
+                        } else {
+                            console.error('Erro: "cidades" não é uma matriz.');
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (e) {
+                    console.error('Erro ao analisar JSON: ' + e);
+                    console.log('Resposta recebida: ' + response);
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Erro na requisição AJAX: ' + error);
+                console.log(xhr.responseText);  // Adiciona log para ver o texto da resposta
             }
         });
     }
@@ -37,16 +49,23 @@ $(document).ready(function () {
             method: 'POST',
             data: { nome: cityName },
             success: function (response) {
-                var data = JSON.parse(response);
-                if (data.status === 'success') {
-                    $('#addCityModal').hide();
-                    fetchCidades();
-                } else {
-                    alert(data.message);
+                try {
+                    var data = JSON.parse(response);
+                    console.log(data);
+                    if (data.status === 'success') {
+                        $('#addCityModal').hide();
+                        fetchCidades();
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (e) {
+                    console.error('Erro ao analisar JSON: ' + e);
+                    console.log('Resposta recebida: ' + response);
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Erro na requisição AJAX: ' + error);
+                console.log(xhr.responseText);
             }
         });
     });
@@ -60,38 +79,47 @@ $(document).ready(function () {
             method: 'POST',
             data: { id: cityId, nome: cityName },
             success: function (response) {
-                var data = JSON.parse(response);
-                if (data.status === 'success') {
-                    $('#editCityModal').hide();
-                    fetchCidades();
-                } else {
-                    alert(data.message);
+                try {
+                    var data = JSON.parse(response);
+                    console.log(data);
+                    if (data.status === 'success') {
+                        $('#editCityModal').hide();
+                        fetchCidades();
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (e) {
+                    console.error('Erro ao analisar JSON: ' + e);
+                    console.log('Resposta recebida: ' + response);
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Erro na requisição AJAX: ' + error);
+                console.log(xhr.responseText);
             }
         });
     });
 
     window.editCity = function (id) {
         $.ajax({
-            url: 'scripts/cidades/get_cidades.php',
+            url: 'scripts/cidades/get_cidade.php',
             method: 'GET',
             data: { id: id },
+            dataType: 'json',
             success: function (response) {
-                var data = JSON.parse(response);
-                if (data.status === 'success') {
-                    var city = data.cidade;
+                console.log(response);
+                if (response.status === 'success') {
+                    var city = response.cidade;
                     $('#editCityId').val(city.id);
                     $('#editCityName').val(city.nome);
                     $('#editCityModal').show();
                 } else {
-                    alert(data.message);
+                    alert(response.message);
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Erro na requisição AJAX: ' + error);
+                console.log(xhr.responseText);
             }
         });
     };
@@ -103,15 +131,22 @@ $(document).ready(function () {
                 method: 'POST',
                 data: { id: id },
                 success: function (response) {
-                    var data = JSON.parse(response);
-                    if (data.status === 'success') {
-                        fetchCidades();
-                    } else {
-                        alert(data.message);
+                    try {
+                        var data = JSON.parse(response);
+                        console.log(data);
+                        if (data.status === 'success') {
+                            fetchCidades();
+                        } else {
+                            alert(data.message);
+                        }
+                    } catch (e) {
+                        console.error('Erro ao analisar JSON: ' + e);
+                        console.log('Resposta recebida: ' + response);
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error('Erro na requisição AJAX: ' + error);
+                    console.log(xhr.responseText);
                 }
             });
         }
@@ -124,7 +159,4 @@ $(document).ready(function () {
     $('#addCityBtn').on('click', function () {
         $('#addCityModal').show();
     });
-
-    // Inicializa o DataTable
-    $('#cityTable').DataTable();
 });

@@ -1,16 +1,17 @@
 <?php
 include '../../includes/conexao.php';
 
-$id = $_GET['id'];
-
-$sql = "SELECT * FROM cidades WHERE id = $id";
+$sql = "SELECT * FROM cidades";
 $result = $conn->query($sql);
 
+$cidades = [];
 if ($result->num_rows > 0) {
-    $empresa = $result->fetch_assoc();
-    echo json_encode(['status' => 'success', 'empresa' => $empresa]);
+    while ($row = $result->fetch_assoc()) {
+        $cidades[] = $row;
+    }
+    echo json_encode(['status' => 'success', 'cidades' => $cidades]);
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Empresa não encontrada']);
+    echo json_encode(['status' => 'error', 'message' => 'Nenhuma cidade encontrada']);
 }
 
 $conn->close();

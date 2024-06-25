@@ -1,32 +1,14 @@
 <?php
 include '../../includes/conexao.php';
 
-$response = array();
+$id = $_POST['id'];
+$nome = $_POST['nome'];
 
-if (isset($_POST['id']) && isset($_POST['nome'])) {
-    $id = $_POST['id'];
-    $nome = $_POST['nome'];
-
-    $sql = "UPDATE cidades SET nome = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("si", $nome, $id);
-        if ($stmt->execute()) {
-            $response['status'] = 'success';
-            $response['message'] = 'Cidade atualizada com sucesso';
-        } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Erro ao executar a consulta';
-        }
-        $stmt->close();
-    } else {
-        $response['status'] = 'error';
-        $response['message'] = 'Erro na preparação da consulta';
-    }
+$sql = "UPDATE cidades SET nome = '$nome' WHERE id = $id";
+if ($conn->query($sql) === TRUE) {
+    echo json_encode(['status' => 'success', 'message' => 'Empresa atualizada com sucesso']);
 } else {
-    $response['status'] = 'error';
-    $response['message'] = 'ID ou nome não fornecido';
+    echo json_encode(['status' => 'error', 'message' => 'Erro ao atualizar empresa']);
 }
 
-echo json_encode($response);
 $conn->close();

@@ -1,31 +1,13 @@
 <?php
 include '../../includes/conexao.php';
 
-$response = array();
+$nome = $_POST['nome'];
 
-if (isset($_POST['nome'])) {
-    $nome = $_POST['nome'];
-
-    $sql = "INSERT INTO cidades (nome) VALUES (?)";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("s", $nome);
-        if ($stmt->execute()) {
-            $response['status'] = 'success';
-            $response['message'] = 'Cidade adicionada com sucesso';
-        } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Erro ao executar a consulta';
-        }
-        $stmt->close();
-    } else {
-        $response['status'] = 'error';
-        $response['message'] = 'Erro na preparação da consulta';
-    }
+$sql = "INSERT INTO cidades (nome) VALUES ('$nome')";
+if ($conn->query($sql) === TRUE) {
+    echo json_encode(['status' => 'success', 'message' => 'Empresa adicionada com sucesso']);
 } else {
-    $response['status'] = 'error';
-    $response['message'] = 'Nome não fornecido';
+    echo json_encode(['status' => 'error', 'message' => 'Erro ao adicionar empresa']);
 }
 
-echo json_encode($response);
 $conn->close();

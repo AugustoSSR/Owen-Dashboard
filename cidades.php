@@ -18,7 +18,6 @@ $user_name = $_SESSION["name"];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Cidades</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/users.css">
     <link rel="stylesheet" href="css/alerts.css">
@@ -27,8 +26,8 @@ $user_name = $_SESSION["name"];
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <!-- Incluir DataTables -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 </head>
 
 <body>
